@@ -1,5 +1,8 @@
 package puppy.code;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -42,6 +45,7 @@ public class GameScreen implements Screen {
          Sound dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
         
 	     Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("ecenario.mp3"));
+	     rainMusic.setVolume(0.3f);
          lluvia = new Lluvia(gota, gotaMala, dropSound, rainMusic);
          
          tarroGlobal = jugadorMelee;
@@ -67,15 +71,21 @@ public class GameScreen implements Screen {
 	    jefe.dibujar(batch);
 	    jugadorMelee.dibujar(batch);
 	    jugadorRango.dibujar(batch);
-	    font.draw(batch, "Vidas: " + jugadorMelee.getVidas(), 10, 470);
-	    font.draw(batch, "Vidas: " + jugadorRango.getVidas(), 10, 450);
+	    font.draw(batch, "Vidas Melee: " + jugadorMelee.getVidas(), 10, 470);
+	    font.draw(batch, "Vidas Rango: " + jugadorRango.getVidas(), 10, 450);
 	    batch.end();
 
-	    jefe.actualizar(delta, jugadorMelee);
-	    jefe.actualizar(delta, jugadorRango);
+	    // ==== Lógica ====
 	    jugadorMelee.actualizarMovimiento();
 	    jugadorRango.actualizarMovimiento();
-	    
+
+	    // Actualizar el jefe con ambos jugadores
+	    List<Jugador> jugadores = new ArrayList<>();
+	    jugadores.add(jugadorMelee);
+	    jugadores.add(jugadorRango);
+	    jefe.actualizar(delta, jugadores);
+
+	    // Comprobar si alguno murió
 	    if (jugadorMelee.getVidas() <= 0 || jugadorRango.getVidas() <= 0) {
 	        game.setScreen(new GameOverScreen(game));
 	        dispose();

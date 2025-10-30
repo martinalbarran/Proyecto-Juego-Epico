@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.HashSet;
+import java.util.Set;
+
+
 public class AtaqueMitadPantalla implements AtaqueJefe {
 
     private boolean ladoIzquierdo;
@@ -19,7 +23,9 @@ public class AtaqueMitadPantalla implements AtaqueJefe {
 
     private boolean enPreparacion = true;
     private boolean terminado = false;
-    private boolean dañoAplicado = false; 
+
+    
+    private Set<Jugador> jugadoresHeridos;
 
     public AtaqueMitadPantalla(boolean ladoIzquierdo, float duracionPreparacion, float duracionAtaque) {
         this.ladoIzquierdo = ladoIzquierdo;
@@ -30,6 +36,8 @@ public class AtaqueMitadPantalla implements AtaqueJefe {
         texturaPreparacion = new Texture(Gdx.files.internal("rayo_preparacion.png"));
         texturaAtaque = new Texture(Gdx.files.internal("rayo_ataque.png"));
         crearArea();
+
+        jugadoresHeridos = null; 
     }
 
     private void crearArea() {
@@ -45,12 +53,20 @@ public class AtaqueMitadPantalla implements AtaqueJefe {
         if (terminado) return;
         tiempo += delta;
 
-        if (enPreparacion && tiempo >= duracionPreparacion) {
+        if (enPreparacion && tiempo >= duracionPreparacion) {        
             enPreparacion = false;
             tiempo = 0;
+            jugadoresHeridos = new HashSet<Jugador>();
         } else if (!enPreparacion && tiempo >= duracionAtaque) {
             terminado = true;
+            jugadoresHeridos = null;
         }
+    }
+    
+    @Override
+    public Float getPosicionObjetivoX(Rectangle areaJefe, java.util.List<Jugador> jugadores) {
+        float destinoX = areaAtaque.x + areaAtaque.width / 2f - areaJefe.width / 2f;
+        return destinoX;
     }
 
     @Override
@@ -69,11 +85,15 @@ public class AtaqueMitadPantalla implements AtaqueJefe {
     }
 
     @Override
-    public void verificarColision(Jugador tarro) {
-        if (!enPreparacion && !terminado && !dañoAplicado) {
-            if (areaAtaque.overlaps(tarro.getArea())) {
-                tarro.dañar();
-                dañoAplicado = true; 
+    public void verificarColision(Jugador jugador) {        
+        if (enPreparacion || terminado) return;
+
+        if (jugadoresHeridos != null && jugadoresHeridos.contains(jugador)) return;
+
+        if (areaAtaque.overlaps(jugador.getArea())) {
+            jugador.dañar();
+            if (jugadoresHeridos != null) {
+                jugadoresHeridos.add(jugador);
             }
         }
     }
@@ -85,8 +105,9 @@ public class AtaqueMitadPantalla implements AtaqueJefe {
 
     @Override
     public void destruir() {
-        texturaPreparacion.dispose();
-        texturaAtaque.dispose();
+        if (texturaPreparacion != null) texturaPreparacion.dispose();
+        if (texturaAtaque != null) texturaAtaque.dispose();
+        jugadoresHeridos = null;
     }
 
     public Rectangle getAreaAtaque() {

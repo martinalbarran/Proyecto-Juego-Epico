@@ -5,16 +5,26 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.MathUtils;
 
+import java.util.List;
+
+/**
+ * Ataque de gotas: el jefe elige un jugador aleatorio una vez
+ * y lanza gotas desde su posición hacia abajo.
+ */
 public class AtaqueGotas implements AtaqueJefe {
+
     private Texture gota;
     private Array<Rectangle> gotas;
     private float tiempoDesdeUltima = 0;
     private float tiempoTranscurrido = 0;
     private final float duracion = 5f;
-    private final float cooldown = 3f; 
+    private final float cooldown = 3f;
     private boolean enCooldown = false;
     private boolean terminado = false;
+
+    private Jugador objetivoSeleccionado = null;
 
     public AtaqueGotas() {
         gota = new Texture(Gdx.files.internal("dropBad.png"));
@@ -28,12 +38,11 @@ public class AtaqueGotas implements AtaqueJefe {
         tiempoTranscurrido += delta;
 
         if (!enCooldown) {
-            // fase activa del ataque
             if (tiempoTranscurrido < duracion) {
                 tiempoDesdeUltima += delta;
                 if (tiempoDesdeUltima > 0.5f) {
                     Rectangle g = new Rectangle(
-                        areaJefe.x + areaJefe.width / 2 - 16,
+                        areaJefe.x + areaJefe.width / 2f - 16,
                         areaJefe.y,
                         32,
                         32
@@ -42,22 +51,16 @@ public class AtaqueGotas implements AtaqueJefe {
                     tiempoDesdeUltima = 0;
                 }
             } else {
-                // Entra en enfriamiento, pero NO borramos las gotas
                 enCooldown = true;
                 tiempoDesdeUltima = 0;
             }
         } else {
-            // Esperamos a que pase el cooldown
-            if (tiempoTranscurrido > duracion + cooldown) {
-                // Finaliza el ataque cuando ya pasó todo el tiempo
-                // y no quedan gotas en pantalla
-                if (gotas.size == 0) {
-                    terminado = true;
-                }
+            if (tiempoTranscurrido > duracion + cooldown && gotas.size == 0) {
+                terminado = true;
             }
         }
 
-        // Actualizar movimiento de gotas
+        // Movimiento de las gotas
         for (int i = 0; i < gotas.size; i++) {
             Rectangle r = gotas.get(i);
             r.y -= 200 * delta;
@@ -66,6 +69,25 @@ public class AtaqueGotas implements AtaqueJefe {
                 i--;
             }
         }
+    }
+
+    @Override
+    public Float getPosicionObjetivoX(Rectangle areaJefe, List<Jugador> jugadores) {
+        // Si no hay jugadores, no mover
+        if (jugadores == null || jugadores.isEmpty()) return null;
+
+        // Elegir objetivo aleatorio una sola vez
+        if (objetivoSeleccionado == null) {
+            int index = MathUtils.random(jugadores.size() - 1);
+            objetivoSeleccionado = jugadores.get(index);
+        }
+
+        // Calcular el centro del jugador y mover el jefe hacia ese punto
+        Rectangle areaJugador = objetivoSeleccionado.getArea();
+        float centroJugadorX = areaJugador.x + areaJugador.width / 2f;
+        float destinoX = centroJugadorX - areaJefe.width / 2f;
+
+        return destinoX;
     }
 
     @Override
@@ -94,6 +116,7 @@ public class AtaqueGotas implements AtaqueJefe {
 
     @Override
     public void destruir() {
-        gota.dispose();
+        if (gota != null) gota.dispose();
+        objetivoSeleccionado = null;
     }
 }

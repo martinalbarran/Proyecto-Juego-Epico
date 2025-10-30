@@ -9,4 +9,7 @@ public interface AtaqueJefe {
     void verificarColision(Jugador tarro);
     boolean haFinalizado();
     void destruir();
+    default Float getPosicionObjetivoX(Rectangle areaJefe, java.util.List<Jugador> jugadores) {
+        return null;
+    }
 }

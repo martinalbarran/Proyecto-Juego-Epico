@@ -24,7 +24,7 @@ public class GameOverScreen implements Screen {
 
         // 🔊 Cargar la música de Game Over
         musicaGameOver = Gdx.audio.newMusic(Gdx.files.internal("gameOver.mp3"));
-        musicaGameOver.setLooping(false); // no se repite
+        musicaGameOver.setLooping(true); // no se repite
         musicaGameOver.setVolume(0.7f);   // volumen entre 0 y 1
         musicaGameOver.play();            // empieza a reproducirse
     }
