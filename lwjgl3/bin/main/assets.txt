@@ -1,0 +1,13 @@
+bucket.png
+drop.png
+drop.wav
+dropBad.png
+ecenario.mp3
+gameOver.mp3
+hurt.ogg
+jefe.png
+libgdx.png
+rain.mp3
+rayo_ataque.png
+rayo_preparacion.png
+With hearths aligned.mp3
