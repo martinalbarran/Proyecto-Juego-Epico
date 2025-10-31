@@ -3,7 +3,6 @@ package puppy.code;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,25 +11,30 @@ import java.util.function.Supplier;
 public class Jefe {
 
     private Texture textura;
-    private Rectangle area;
-    private float velocidadMovimiento = 350f;
+    private Rectangle area;       
+    private Rectangle hitbox;     
+    private float velocidadMovimiento = 250f;
 
     private List<Supplier<AtaqueJefe>> ataquesDisponibles;
+    private int indiceAtaqueActual = 0; 
     private AtaqueJefe ataqueActual;
     private Supplier<AtaqueJefe> ataquePendienteFactory;
     private AtaqueJefe ataquePendienteInstanciaPreview;
-    private float tiempoEnfriamiento = 3f;
+    private float tiempoEnfriamiento = 0f;
     private float temporizadorEnfriamiento = 0f;
     private boolean enCooldown = false;
 
     public Jefe() {
         textura = new Texture(Gdx.files.internal("jefe.png"));
         area = new Rectangle(800 / 2f - 64, 480 - 128, 128, 128);
+
+        hitbox = new Rectangle(area.x, area.y, area.width, area.height);
+
         ataquesDisponibles = new ArrayList<>();
-        registrarAtaquesBase();
+        coreografriaAtaques();
     }
 
-    private void registrarAtaquesBase() {
+    private void coreografriaAtaques() {
         ataquesDisponibles.add(() -> new AtaqueMitadPantalla(true, 1.5f, 3f));
         ataquesDisponibles.add(() -> new AtaqueMitadPantalla(false, 1.5f, 3f));
         ataquesDisponibles.add(AtaqueGotas::new);
@@ -41,6 +45,8 @@ public class Jefe {
     }
 
     public void actualizar(float delta, List<Jugador> jugadores) {
+        actualizarHitbox();
+
         if (ataqueActual != null) {
             moverSegunAtaque(delta, jugadores);
             ataqueActual.actualizar(delta, area);
@@ -84,19 +90,27 @@ public class Jefe {
             return;
         }
 
-        seleccionarAtaquePendienteAleatorio();
+        seleccionarAtaquePendienteSecuencial(); // 🔹 ahora elige por orden
     }
 
-    private void seleccionarAtaquePendienteAleatorio() {
-        int index = MathUtils.random(ataquesDisponibles.size() - 1);
-        ataquePendienteFactory = ataquesDisponibles.get(index);
+
+    private void seleccionarAtaquePendienteSecuencial() {
+        if (ataquesDisponibles.isEmpty()) return;
+
+        ataquePendienteFactory = ataquesDisponibles.get(indiceAtaqueActual);
         ataquePendienteInstanciaPreview = null;
+
+        indiceAtaqueActual++;
+        if (indiceAtaqueActual >= ataquesDisponibles.size()) {
+            indiceAtaqueActual = 0; 
+        }
     }
 
     private void moverHaciaX(float destinoX, float delta) {
         float diferencia = destinoX - area.x;
         if (Math.abs(diferencia) > 1f) {
             area.x += Math.signum(diferencia) * velocidadMovimiento * delta;
+            actualizarHitbox();
         }
     }
 
@@ -104,6 +118,14 @@ public class Jefe {
         if (ataqueActual == null) return;
         Float destinoX = ataqueActual.getPosicionObjetivoX(area, jugadores);
         if (destinoX != null) moverHaciaX(destinoX, delta);
+    }
+
+    private void actualizarHitbox() {
+        hitbox.setPosition(area.x, area.y);
+    }
+
+    public Rectangle getHitbox() {
+        return hitbox;
     }
 
     public void dibujar(SpriteBatch batch) {

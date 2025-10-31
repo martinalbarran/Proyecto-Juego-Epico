@@ -24,21 +24,19 @@ public class GameScreen implements Screen {
 	private Jefe jefe;
 	public static Jugador tarroGlobal;
 	   
-	//boolean activo = true;
+
 
 	public GameScreen(final GameLluviaMenu game) {
 		this.game = game;
         this.batch = game.getBatch();
         this.font = game.getFont();
-		  // load the images for the droplet and the bucket, 64x64 pixels each 	     
-          //TODO: Cambiar las texturas para cada jugador
 		  Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
 		  jugadorMelee = new JugadorMelee(new Texture(Gdx.files.internal("bucket.png")),hurtSound);
 		  jugadorRango = new JugadorRango(new Texture(Gdx.files.internal("bucket.png")),hurtSound);
 		  
 		  jefe = new Jefe();
          
-	      // load the drop sound effect and the rain background "music" 
+
          Texture gota = new Texture(Gdx.files.internal("drop.png"));
          Texture gotaMala = new Texture(Gdx.files.internal("dropBad.png"));
          
@@ -54,10 +52,10 @@ public class GameScreen implements Screen {
 	      camera = new OrthographicCamera();
 	      camera.setToOrtho(false, 800, 480);
 	      batch = new SpriteBatch();
-	      // creacion del tarro
+
 	      jugadorMelee.crear();
 	      jugadorRango.crear();
-	      // creacion de la lluvia
+
 	      lluvia.crear();
 	}
 
@@ -75,17 +73,17 @@ public class GameScreen implements Screen {
 	    font.draw(batch, "Vidas Rango: " + jugadorRango.getVidas(), 10, 450);
 	    batch.end();
 
-	    // ==== Lógica ====
+
 	    jugadorMelee.actualizarMovimiento();
 	    jugadorRango.actualizarMovimiento();
 
-	    // Actualizar el jefe con ambos jugadores
+
 	    List<Jugador> jugadores = new ArrayList<>();
 	    jugadores.add(jugadorMelee);
 	    jugadores.add(jugadorRango);
 	    jefe.actualizar(delta, jugadores);
 
-	    // Comprobar si alguno murió
+
 	    if (jugadorMelee.getVidas() <= 0 || jugadorRango.getVidas() <= 0) {
 	        game.setScreen(new GameOverScreen(game));
 	        dispose();

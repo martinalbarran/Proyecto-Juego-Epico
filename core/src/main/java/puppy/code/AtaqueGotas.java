@@ -9,10 +9,7 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.util.List;
 
-/**
- * Ataque de gotas: el jefe elige un jugador aleatorio una vez
- * y lanza gotas desde su posición hacia abajo.
- */
+
 public class AtaqueGotas implements AtaqueJefe {
 
     private Texture gota;
@@ -41,12 +38,7 @@ public class AtaqueGotas implements AtaqueJefe {
             if (tiempoTranscurrido < duracion) {
                 tiempoDesdeUltima += delta;
                 if (tiempoDesdeUltima > 0.5f) {
-                    Rectangle g = new Rectangle(
-                        areaJefe.x + areaJefe.width / 2f - 16,
-                        areaJefe.y,
-                        32,
-                        32
-                    );
+                    Rectangle g = new Rectangle(areaJefe.x + areaJefe.width / 2f - 16,areaJefe.y,32,32);
                     gotas.add(g);
                     tiempoDesdeUltima = 0;
                 }
@@ -59,8 +51,7 @@ public class AtaqueGotas implements AtaqueJefe {
                 terminado = true;
             }
         }
-
-        // Movimiento de las gotas
+        
         for (int i = 0; i < gotas.size; i++) {
             Rectangle r = gotas.get(i);
             r.y -= 200 * delta;
@@ -73,16 +64,13 @@ public class AtaqueGotas implements AtaqueJefe {
 
     @Override
     public Float getPosicionObjetivoX(Rectangle areaJefe, List<Jugador> jugadores) {
-        // Si no hay jugadores, no mover
         if (jugadores == null || jugadores.isEmpty()) return null;
 
-        // Elegir objetivo aleatorio una sola vez
         if (objetivoSeleccionado == null) {
             int index = MathUtils.random(jugadores.size() - 1);
             objetivoSeleccionado = jugadores.get(index);
         }
 
-        // Calcular el centro del jugador y mover el jefe hacia ese punto
         Rectangle areaJugador = objetivoSeleccionado.getArea();
         float centroJugadorX = areaJugador.x + areaJugador.width / 2f;
         float destinoX = centroJugadorX - areaJefe.width / 2f;
