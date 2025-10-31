@@ -18,45 +18,44 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
 	private SpriteBatch batch;	   
 	private BitmapFont font;	
-	private Jugador jugadorMelee;
-	private Jugador jugadorRango;
-	private Lluvia lluvia;
+	private Entidad jugadorMelee;
+	private Entidad jugadorRango;
 	private Jefe jefe;
-	public static Jugador tarroGlobal;
-	   
-
+	public static Entidad tarroGlobal;
+	private Texture player1Tex;
+	private Texture player2Tex;
+	private Texture player1TexHurt;
+	private Texture player2TexHurt;
 
 	public GameScreen(final GameLluviaMenu game) {
 		this.game = game;
         this.batch = game.getBatch();
         this.font = game.getFont();
-		  Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
-		  jugadorMelee = new JugadorMelee(new Texture(Gdx.files.internal("bucket.png")),hurtSound);
-		  jugadorRango = new JugadorRango(new Texture(Gdx.files.internal("bucket.png")),hurtSound);
+        player1Tex = new Texture(Gdx.files.internal("bucket.png"));
+        player2Tex = new Texture(Gdx.files.internal("bucket.png"));
+        player1TexHurt = new Texture(Gdx.files.internal("bucket.png"));
+        player2TexHurt = new Texture(Gdx.files.internal("bucket.png"));
+		Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
+		
+		jugadorMelee = new JugadorMelee(player1Tex, player1TexHurt,hurtSound, 10, 400);
+		jugadorRango = new JugadorRango(player2Tex, player2TexHurt,hurtSound, 10, 400);
 		  
-		  jefe = new Jefe();
-         
-
-         Texture gota = new Texture(Gdx.files.internal("drop.png"));
-         Texture gotaMala = new Texture(Gdx.files.internal("dropBad.png"));
-         
-         Sound dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
+		jefe = new Jefe();         
         
-	     Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("ecenario.mp3"));
-	     rainMusic.setVolume(0.3f);
-         lluvia = new Lluvia(gota, gotaMala, dropSound, rainMusic);
-         
-         tarroGlobal = jugadorMelee;
+	    Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("escenario.mp3"));
+	    rainMusic.setVolume(0.3f);
+        rainMusic.play();
+        rainMusic.setLooping(true);
+        tarroGlobal = jugadorMelee;
 	      
 	      // camera
-	      camera = new OrthographicCamera();
-	      camera.setToOrtho(false, 800, 480);
-	      batch = new SpriteBatch();
+	    camera = new OrthographicCamera();
+	    camera.setToOrtho(false, 800, 480);
+	    batch = new SpriteBatch();
 
-	      jugadorMelee.crear();
-	      jugadorRango.crear();
+	    jugadorMelee.crear();
+	    jugadorRango.crear();
 
-	      lluvia.crear();
 	}
 
 	@Override
@@ -66,11 +65,11 @@ public class GameScreen implements Screen {
 	    batch.setProjectionMatrix(camera.combined);
 
 	    batch.begin();
-	    jefe.dibujar(batch);
+	    jefe.dibujarJefe(batch);
 	    jugadorMelee.dibujar(batch);
 	    jugadorRango.dibujar(batch);
-	    font.draw(batch, "Vidas Melee: " + jugadorMelee.getVidas(), 10, 470);
-	    font.draw(batch, "Vidas Rango: " + jugadorRango.getVidas(), 10, 450);
+	    font.draw(batch, "Vidas Melee: " + jugadorMelee.getVida(), 10, 470);
+	    font.draw(batch, "Vidas Rango: " + jugadorRango.getVida(), 10, 450);
 	    batch.end();
 
 
@@ -78,13 +77,13 @@ public class GameScreen implements Screen {
 	    jugadorRango.actualizarMovimiento();
 
 
-	    List<Jugador> jugadores = new ArrayList<>();
+	    List<Entidad> jugadores = new ArrayList<>();
 	    jugadores.add(jugadorMelee);
 	    jugadores.add(jugadorRango);
 	    jefe.actualizar(delta, jugadores);
 
 
-	    if (jugadorMelee.getVidas() <= 0 || jugadorRango.getVidas() <= 0) {
+	    if (jugadorMelee.getVida() <= 0 || jugadorRango.getVida() <= 0) {
 	        game.setScreen(new GameOverScreen(game));
 	        dispose();
 	    }
@@ -97,8 +96,6 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-	  // continuar con sonido de lluvia
-	  lluvia.continuar();
 	}
 
 	@Override
@@ -108,18 +105,15 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void pause() {
-		lluvia.pausar();
 		game.setScreen(new PausaScreen(game, this)); 
 	}
 
 	@Override
 	public void resume() {
-
 	}
 
 	@Override
 	public void dispose() {
       jugadorMelee.destruir();
-      lluvia.destruir();
 	}
 }

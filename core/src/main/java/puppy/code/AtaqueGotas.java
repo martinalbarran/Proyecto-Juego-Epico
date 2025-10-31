@@ -5,12 +5,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.math.MathUtils;
-
-import java.util.List;
 
 
-public class AtaqueGotas implements AtaqueJefe {
+public class AtaqueGotas implements Ataque {
 
     private Texture gota;
     private Array<Rectangle> gotas;
@@ -20,8 +17,7 @@ public class AtaqueGotas implements AtaqueJefe {
     private final float cooldown = 3f;
     private boolean enCooldown = false;
     private boolean terminado = false;
-
-    private Jugador objetivoSeleccionado = null;
+    private Entidad objetivoSeleccionado = null;
 
     public AtaqueGotas() {
         gota = new Texture(Gdx.files.internal("dropBad.png"));
@@ -62,16 +58,8 @@ public class AtaqueGotas implements AtaqueJefe {
         }
     }
 
-    @Override
-    public Float getPosicionObjetivoX(Rectangle areaJefe, List<Jugador> jugadores) {
-        if (jugadores == null || jugadores.isEmpty()) return null;
-
-        if (objetivoSeleccionado == null) {
-            int index = MathUtils.random(jugadores.size() - 1);
-            objetivoSeleccionado = jugadores.get(index);
-        }
-
-        Rectangle areaJugador = objetivoSeleccionado.getArea();
+    public Float getPosicionObjetivoX(Rectangle areaJefe, Entidad entidad) {
+        Rectangle areaJugador = entidad.getAreaEntidad();
         float centroJugadorX = areaJugador.x + areaJugador.width / 2f;
         float destinoX = centroJugadorX - areaJefe.width / 2f;
 
@@ -79,10 +67,10 @@ public class AtaqueGotas implements AtaqueJefe {
     }
 
     @Override
-    public void verificarColision(Jugador tarro) {
+    public void verificarColision(Entidad tarro) {
         for (int i = 0; i < gotas.size; i++) {
             Rectangle r = gotas.get(i);
-            if (r.overlaps(tarro.getArea())) {
+            if (r.overlaps(tarro.getAreaEntidad())) {
                 tarro.dañar();
                 gotas.removeIndex(i);
                 i--;

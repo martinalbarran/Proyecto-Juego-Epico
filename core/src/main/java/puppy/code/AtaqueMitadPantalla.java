@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class AtaqueMitadPantalla implements AtaqueJefe {
+public class AtaqueMitadPantalla implements Ataque {
 
     private boolean ladoIzquierdo;
     private float duracionPreparacion;
@@ -25,7 +25,7 @@ public class AtaqueMitadPantalla implements AtaqueJefe {
     private boolean terminado = false;
 
     
-    private Set<Jugador> jugadoresHeridos;
+    private Set<Entidad> jugadoresHeridos;
 
     public AtaqueMitadPantalla(boolean ladoIzquierdo, float duracionPreparacion, float duracionAtaque) {
         this.ladoIzquierdo = ladoIzquierdo;
@@ -56,15 +56,14 @@ public class AtaqueMitadPantalla implements AtaqueJefe {
         if (enPreparacion && tiempo >= duracionPreparacion) {        
             enPreparacion = false;
             tiempo = 0;
-            jugadoresHeridos = new HashSet<Jugador>();
+            jugadoresHeridos = new HashSet<Entidad>();
         } else if (!enPreparacion && tiempo >= duracionAtaque) {
             terminado = true;
             jugadoresHeridos = null;
         }
     }
     
-    @Override
-    public Float getPosicionObjetivoX(Rectangle areaJefe, java.util.List<Jugador> jugadores) {
+    public Float getPosicionObjetivoX(Rectangle areaJefe, Entidad entidad) {
         float destinoX = areaAtaque.x + areaAtaque.width / 2f - areaJefe.width / 2f;
         return destinoX;
     }
@@ -85,12 +84,12 @@ public class AtaqueMitadPantalla implements AtaqueJefe {
     }
 
     @Override
-    public void verificarColision(Jugador jugador) {        
+    public void verificarColision(Entidad jugador) {        
         if (enPreparacion || terminado) return;
 
         if (jugadoresHeridos != null && jugadoresHeridos.contains(jugador)) return;
 
-        if (areaAtaque.overlaps(jugador.getArea())) {
+        if (areaAtaque.overlaps(jugador.getAreaEntidad())) {
             jugador.dañar();
             if (jugadoresHeridos != null) {
                 jugadoresHeridos.add(jugador);
