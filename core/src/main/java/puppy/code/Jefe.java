@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class Jefe extends Entidad {
-    private Rectangle area;       
-    private Rectangle hitbox;     
-
+   
     private List<Supplier<Ataque>> ataquesDisponibles;
     private int indiceAtaqueActual = 0; 
     private Ataque ataqueActual;
@@ -24,9 +22,7 @@ public class Jefe extends Entidad {
     private Entidad objetivoSeleccionado;
     
     public Jefe() {
-    	super(new Texture(Gdx.files.internal("jefe.png")),new Texture(Gdx.files.internal("bucket.png")),Gdx.audio.newSound(Gdx.files.internal("hurt.ogg")), 20, 550);
-        area = new Rectangle(800 / 2f - 64, 480 - 128, 128, 128);
-        hitbox = new Rectangle(area.x, area.y, area.width, area.height);
+    	super(new Texture(Gdx.files.internal("jefe.png")),new Texture(Gdx.files.internal("bucket.png")),Gdx.audio.newSound(Gdx.files.internal("hurt.ogg")), 20, 550, 336 , 352, 128, 128);
         ataquesDisponibles = new ArrayList<>();
         ataque();
     }
@@ -42,6 +38,7 @@ public class Jefe extends Entidad {
         ataquesDisponibles.add(nuevoAtaque);
     }
 
+
     public void actualizar(float delta, List<Entidad> jugadores) {
         if (jugadores == null || jugadores.isEmpty()) return;
 
@@ -51,11 +48,9 @@ public class Jefe extends Entidad {
             objetivoSeleccionado = jugadores.get(index);
         }
 
-        actualizarHitbox();
-
         if (ataqueActual != null) {
             moverSegunAtaque(delta, objetivoSeleccionado);
-            ataqueActual.actualizar(delta, area);
+            ataqueActual.actualizar(delta, getAreaEntidad());
 
             for (Entidad jugador : jugadores) {
                 ataqueActual.verificarColision(jugador);
@@ -74,14 +69,14 @@ public class Jefe extends Entidad {
             if (ataquePendienteInstanciaPreview == null)
                 ataquePendienteInstanciaPreview = ataquePendienteFactory.get();
 
-            Float objetivoX = ataquePendienteInstanciaPreview.getPosicionObjetivoX(area, objetivoSeleccionado);
+            Float objetivoX = ataquePendienteInstanciaPreview.getPosicionObjetivoX(getAreaEntidad(), objetivoSeleccionado);
             if (objetivoX == null) {
                 ataqueActual = ataquePendienteInstanciaPreview;
                 ataquePendienteFactory = null;
                 ataquePendienteInstanciaPreview = null;
             } else {
                 moverHaciaX(objetivoX, delta);
-                if (Math.abs(area.x - objetivoX) <= 4f) {
+                if (Math.abs(getAreaEntidad().x - objetivoX) <= 4f) {
                     ataqueActual = ataquePendienteInstanciaPreview;
                     ataquePendienteFactory = null;
                     ataquePendienteInstanciaPreview = null;
@@ -122,32 +117,25 @@ public class Jefe extends Entidad {
     }
 
     private void moverHaciaX(float destinoX, float delta) {
-        float diferencia = destinoX - area.x;
-        area.x += diferencia * 5f * delta;
-        actualizarHitbox();
+        float diferencia = destinoX - getAreaEntidad().x;
+        getAreaEntidad().x += diferencia * 5f * delta;
     }
     
     private void moverSegunAtaque(float delta, Entidad objetivoSeleccionado) {
         if (ataqueActual == null) return;
-        Float destinoX = ataqueActual.getPosicionObjetivoX(area, objetivoSeleccionado);
+        Float destinoX = ataqueActual.getPosicionObjetivoX(getAreaEntidad(), objetivoSeleccionado);
         if (destinoX != null) moverHaciaX(destinoX, delta);
     }
 
-    private void actualizarHitbox() {
-        hitbox.setPosition(area.x, area.y);
-    }
 
-    public Rectangle getHitbox() {
-        return hitbox;
-    }
 
     public void dibujarJefe(SpriteBatch batch) {
     	if(isHerido()) {
-    		batch.draw(getTexturaHurt(), area.x+MathUtils.random(-5,5), area.y+MathUtils.random(-5,5), area.width+MathUtils.random(-5,5), area.height+MathUtils.random(-5,5));
+    		batch.draw(getTexturaHurt(), getAreaEntidad().x+MathUtils.random(-5,5), getAreaEntidad().y+MathUtils.random(-5,5), getAreaEntidad().width+MathUtils.random(-5,5), getAreaEntidad().height+MathUtils.random(-5,5));
 			setTiempoHerido(getTiempoHerido()-1);
 			if (getTiempoHerido()<=0) setHerido(false);
     	} else {
-    		batch.draw(getTextura(), area.x, area.y, area.width, area.height);
+    		batch.draw(getTextura(), getAreaEntidad().x, getAreaEntidad().y, getAreaEntidad().width, getAreaEntidad().height);
     	}
     	if (ataqueActual != null) ataqueActual.dibujar(batch);
     }
@@ -159,8 +147,11 @@ public class Jefe extends Entidad {
         if (ataquePendienteInstanciaPreview != null) ataquePendienteInstanciaPreview.destruir();
     }
 
+
 	@Override
-	public void actualizarMovimiento() {
+	protected void chequearAtaque(float delta, Rectangle areaEntidad2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

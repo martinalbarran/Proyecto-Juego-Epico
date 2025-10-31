@@ -17,15 +17,25 @@ public abstract class Entidad {
 	   private boolean herido = false;
 	   private int tiempoHeridoMax = 50;
 	   private int tiempoHerido;
+	   private Ataque ataqueActual;
 	   
-	   
-	   public Entidad(Texture image, Texture imageAlt, Sound ss, int vida, int velocidad) {
+	   public Entidad(Texture image, Texture imageAlt, Sound ss, int vida, int velocidad, int coordenadasX, int coordenadasY, int ancho, int alto) {
 		   this.textura = image;
 		   this.texturaHurt = imageAlt;
 		   this.sonidoHerido = ss;
 		   this.vida = vida;
 		   this.velocidad = velocidad;
+		   crearHitbox(coordenadasX, coordenadasY, ancho, alto);
 	   }
+
+	   
+	   public Ataque getAtaqueActual() {
+		    return ataqueActual;
+		}
+
+		public void setAtaqueActual(Ataque ataqueActual) {
+		    this.ataqueActual = ataqueActual;
+		}
 
 	   public Rectangle getAreaEntidad() {
 		    return areaEntidad;
@@ -100,12 +110,12 @@ public abstract class Entidad {
 		}
 
 		
-	   public void crear() {
+	   public void crearHitbox(int coordenadasX, int coordenadasY, int ancho, int alto) {
 		      areaEntidad = new Rectangle();
-		      areaEntidad.x = 800 / 2 - 64 / 2;
-		      areaEntidad.y = 20;
-		      areaEntidad.width = 64;
-		      areaEntidad.height = 64;
+		      areaEntidad.x = coordenadasX;
+		      areaEntidad.y = coordenadasY;
+		      areaEntidad.width = ancho;
+		      areaEntidad.height = alto;
 	   }
 	   
 	   public void dañar() {
@@ -116,20 +126,22 @@ public abstract class Entidad {
 	   }
 	   
 	   public void dibujar(SpriteBatch batch) {
-		 if (herido) {  
-			 batch.draw(texturaHurt, areaEntidad.x, areaEntidad.y+ MathUtils.random(-5,5));
-			 tiempoHerido--;
-			if (tiempoHerido<=0) herido = false;
-		 }
-		 else {
-			 batch.draw(textura, areaEntidad.x, areaEntidad.y);
-		 }
-	   } 
-	   
-	   
-	   public abstract void actualizarMovimiento();
-	    
+		    if (herido) {  
+		        batch.draw(texturaHurt, areaEntidad.x, areaEntidad.y + MathUtils.random(-5, 5));
+		        tiempoHerido--;
+		        if (tiempoHerido <= 0) herido = false;
+		    } else {
+		        batch.draw(textura, areaEntidad.x, areaEntidad.y);
+		    }
 
+		    if (ataqueActual != null) {
+		        ataqueActual.dibujar(batch);
+		    }
+		}
+	    
+	   public void actualizar() {
+	}	
+	   
 	public void destruir() {
 		    textura.dispose();
 	   }
@@ -139,5 +151,8 @@ public abstract class Entidad {
    }
    
    public abstract void ataque();
+
+
+   protected abstract void chequearAtaque(float delta, Rectangle areaEntidad2);
 	   
 }

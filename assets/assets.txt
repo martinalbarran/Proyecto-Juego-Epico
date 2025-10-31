@@ -1,8 +1,9 @@
+ataqueMelee.jpg
 bucket.png
 drop.png
 drop.wav
 dropBad.png
-ecenario.mp3
+escenario.mp3
 gameOver.mp3
 hurt.ogg
 jefe.png

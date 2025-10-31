@@ -26,7 +26,8 @@ public class GameScreen implements Screen {
 	private Texture player2Tex;
 	private Texture player1TexHurt;
 	private Texture player2TexHurt;
-
+	private Music gameMusic;
+	
 	public GameScreen(final GameLluviaMenu game) {
 		this.game = game;
         this.batch = game.getBatch();
@@ -37,25 +38,20 @@ public class GameScreen implements Screen {
         player2TexHurt = new Texture(Gdx.files.internal("bucket.png"));
 		Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
 		
-		jugadorMelee = new JugadorMelee(player1Tex, player1TexHurt,hurtSound, 10, 400);
-		jugadorRango = new JugadorRango(player2Tex, player2TexHurt,hurtSound, 10, 400);
-		  
+		jugadorMelee = new JugadorMelee(player1Tex, player1TexHurt,hurtSound, 10, 400, 300, 20, 64, 64);
+		jugadorRango = new JugadorRango(player2Tex, player2TexHurt,hurtSound, 10, 400, 350, 20, 64, 64);
 		jefe = new Jefe();         
-        
-	    Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("escenario.mp3"));
-	    rainMusic.setVolume(0.3f);
-        rainMusic.play();
-        rainMusic.setLooping(true);
+
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("escenario.mp3"));
+	    gameMusic.setVolume(0.3f);
+        gameMusic.play();
+        gameMusic.setLooping(true);
         tarroGlobal = jugadorMelee;
 	      
 	      // camera
 	    camera = new OrthographicCamera();
 	    camera.setToOrtho(false, 800, 480);
 	    batch = new SpriteBatch();
-
-	    jugadorMelee.crear();
-	    jugadorRango.crear();
-
 	}
 
 	@Override
@@ -70,21 +66,28 @@ public class GameScreen implements Screen {
 	    jugadorRango.dibujar(batch);
 	    font.draw(batch, "Vidas Melee: " + jugadorMelee.getVida(), 10, 470);
 	    font.draw(batch, "Vidas Rango: " + jugadorRango.getVida(), 10, 450);
+	    font.draw(batch, "Vida JEFE: " + jefe.getVida(), 10, 430);
 	    batch.end();
 
 
-	    jugadorMelee.actualizarMovimiento();
-	    jugadorRango.actualizarMovimiento();
-
-
+	    jugadorMelee.actualizar();
+	    jugadorRango.actualizar();
+	    jugadorMelee.ataque();
+	    jugadorMelee.chequearAtaque(delta, jefe.getAreaEntidad());
+	    
 	    List<Entidad> jugadores = new ArrayList<>();
 	    jugadores.add(jugadorMelee);
 	    jugadores.add(jugadorRango);
 	    jefe.actualizar(delta, jugadores);
 
-
-	    if (jugadorMelee.getVida() <= 0 || jugadorRango.getVida() <= 0) {
+	    if (jugadorMelee.getAtaqueActual() != null) {
+	        jugadorMelee.getAtaqueActual().verificarColision(jefe);
+	        jugadorMelee.getAtaqueActual().actualizar(delta, jefe.getAreaEntidad());
+	    }
+	    
+	    if ((jugadorMelee.getVida() <= 0 || jugadorRango.getVida() <= 0) || (jefe.getVida() <= 0)) {
 	        game.setScreen(new GameOverScreen(game));
+	        gameMusic.stop();
 	        dispose();
 	    }
 	}

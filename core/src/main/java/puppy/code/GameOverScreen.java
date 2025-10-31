@@ -13,7 +13,7 @@ public class GameOverScreen implements Screen {
     private SpriteBatch batch;
     private BitmapFont font;
     private OrthographicCamera camera;
-    private Music musicaGameOver; // 🎵
+    private Music musicaGameOver; 
 
     public GameOverScreen(final GameLluviaMenu game) {
         this.game = game;
@@ -22,11 +22,10 @@ public class GameOverScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
 
-        // 🔊 Cargar la música de Game Over
         musicaGameOver = Gdx.audio.newMusic(Gdx.files.internal("gameOver.mp3"));
-        musicaGameOver.setLooping(true); // no se repite
-        musicaGameOver.setVolume(0.7f);   // volumen entre 0 y 1
-        musicaGameOver.play();            // empieza a reproducirse
+        musicaGameOver.setLooping(true);
+        musicaGameOver.setVolume(0.7f);   
+        musicaGameOver.play();      
     }
 
     @Override
@@ -42,9 +41,8 @@ public class GameOverScreen implements Screen {
         font.draw(batch, "Toca en cualquier lado para reiniciar.", 220, 150);
         batch.end();
 
-        // Si el jugador toca, reiniciar el juego
         if (Gdx.input.isTouched()) {
-            musicaGameOver.stop(); // detener música antes de salir
+            musicaGameOver.stop(); 
             game.setScreen(new GameScreen(game));
             dispose();
         }
