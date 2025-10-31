@@ -65,8 +65,17 @@ public class GameScreen implements Screen {
 	    jugadorMelee.dibujar(batch);
 	    
 	    jugadorRango.dibujar(batch);
+	    // En este bloque estamos revisando las colisiones de los ataques de cada jugador
+	    if (jugadorMelee.getAtaqueActual() != null) {
+	        jugadorMelee.getAtaqueActual().verificarColision(jefe);
+	        jugadorMelee.getAtaqueActual().actualizar(delta, jefe.getAreaEntidad());
+	    }
 	    for (AtaqueRangoJugador disparo : ((JugadorRango) jugadorRango).getDisparos()) {
-	        disparo.dibujar(batch);}
+	        disparo.dibujar(batch);
+		    disparo.verificarColision(jefe);
+		    disparo.actualizar(delta, jefe.getAreaEntidad());
+		}
+	    //-------------------------------------------------------------------------------
 	    
 	    font.draw(batch, "Vidas Melee: " + jugadorMelee.getVida(), 10, 470);
 	    font.draw(batch, "Vidas Rango: " + jugadorRango.getVida(), 10, 450);
@@ -85,16 +94,8 @@ public class GameScreen implements Screen {
 	    jugadores.add(jugadorMelee);
 	    jugadores.add(jugadorRango);
 	    jefe.actualizar(delta, jugadores);
-	    
-	    if (jugadorRango.getAtaqueActual() != null) {
-	        jugadorRango.getAtaqueActual().verificarColision(jefe);
-	        jugadorRango.getAtaqueActual().actualizar(delta, jefe.getAreaEntidad());
-	    }
-
-	    if (jugadorMelee.getAtaqueActual() != null) {
-	        jugadorMelee.getAtaqueActual().verificarColision(jefe);
-	        jugadorMelee.getAtaqueActual().actualizar(delta, jefe.getAreaEntidad());
-	    }
+	   
+	   
 	    
 	    if ((jugadorMelee.getVida() <= 0 || jugadorRango.getVida() <= 0) || (jefe.getVida() <= 0)) {
 	        game.setScreen(new GameOverScreen(game));

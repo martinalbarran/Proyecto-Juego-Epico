@@ -47,7 +47,7 @@ public class MainMenuScreen implements Screen {
         // Verificar si el mouse está sobre el botón
         Vector3 mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mousePos);
-        isButtonHovered = startButton.contains(mousePos.x, mousePos.y);
+        isButtonHovered = new Rectangle(startButton.x + 250,startButton.y - 150,startButton.width,startButton.height).contains(mousePos.x, mousePos.y);
 
         // Dibujar el botón
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -56,22 +56,24 @@ public class MainMenuScreen implements Screen {
         } else {
             shapeRenderer.setColor(0.2f, 0.4f, 0.7f, 1); // Azul oscuro normal
         }
-        shapeRenderer.rect(startButton.x, startButton.y, startButton.width, startButton.height);
+        shapeRenderer.rect(startButton.x + 250, startButton.y -150, startButton.width, startButton.height);
         shapeRenderer.end();
 
         // Dibujar borde del botón
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(startButton.x, startButton.y, startButton.width, startButton.height);
+        shapeRenderer.rect(startButton.x + 250, startButton.y-150, startButton.width, startButton.height);
         shapeRenderer.end();
 
         // Dibujar textos
         batch.begin();
         font.getData().setScale(2, 2);
-        font.draw(batch, "Bienvenido a Recolecta Gotas!!!", 80, 350);
+        font.draw(batch, "¡Bienvenido a el Increíble (wow) simulador de combate!", 50, 430);
+        font.draw(batch, "Controles Jugador Melee (Azul)\nDirección: W-A-S-D\nAcción: F", 10, 320);
+        font.draw(batch, "Controles Jugador Rango (Rojo)\nDirección: [UP]-[DOWN]-[LEFT]-[RIGHT]\nAcción: Shift Derecho", 10, 200);
         
         font.getData().setScale(1.5f, 1.5f);
-        font.draw(batch, "INICIAR JUEGO", startButton.x + 20, startButton.y + 38);
+        font.draw(batch, "INICIAR JUEGO", startButton.x + 275, startButton.y -110);
         
         font.getData().setScale(1, 1);
         batch.end();

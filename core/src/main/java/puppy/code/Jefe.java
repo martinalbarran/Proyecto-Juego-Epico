@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class Jefe extends Entidad {
-   
     private List<Supplier<Ataque>> ataquesDisponibles;
     private int indiceAtaqueActual = 0; 
     private Ataque ataqueActual;
@@ -30,9 +29,9 @@ public class Jefe extends Entidad {
     @Override
     public void ataque() {
     	ataquesDisponibles.add(() -> new AtaqueRayos(true)); 
-    	ataquesDisponibles.add(() -> new AtaqueMitadPantalla(false, 1.5f, 3f));    	
+    	ataquesDisponibles.add(() -> new AtaqueMitadPantalla(false, 1f, 1f));    	
     	ataquesDisponibles.add(() -> new AtaqueRayos(false));
-        ataquesDisponibles.add(() -> new AtaqueMitadPantalla(true, 1.5f, 3f));
+        ataquesDisponibles.add(() -> new AtaqueMitadPantalla(true, 1f, 1f));
         ataquesDisponibles.add(AtaqueGotas::new);
     }
 

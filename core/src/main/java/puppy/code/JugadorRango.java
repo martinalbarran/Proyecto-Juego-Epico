@@ -19,7 +19,7 @@ public class JugadorRango extends Entidad {
 
 
     public void ataque() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)) {
             AtaqueRangoJugador nuevoDisparo = new AtaqueRangoJugador(getAreaEntidad());
             setAtaqueActual(nuevoDisparo); 
             disparos.add(nuevoDisparo);
