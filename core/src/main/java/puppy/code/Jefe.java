@@ -22,15 +22,17 @@ public class Jefe extends Entidad {
     private Entidad objetivoSeleccionado;
     
     public Jefe() {
-    	super(new Texture(Gdx.files.internal("jefe.png")),new Texture(Gdx.files.internal("bucket.png")),Gdx.audio.newSound(Gdx.files.internal("hurt.ogg")), 20, 550, 336 , 352, 128, 128);
+    	super(new Texture(Gdx.files.internal("jefe.png")),new Texture(Gdx.files.internal("jefeHurt.png")),Gdx.audio.newSound(Gdx.files.internal("good.mp3")), 100, 550, 336 , 352, 128, 128);
         ataquesDisponibles = new ArrayList<>();
         ataque();
     }
 
     @Override
     public void ataque() {
+    	ataquesDisponibles.add(() -> new AtaqueRayos(true)); 
+    	ataquesDisponibles.add(() -> new AtaqueMitadPantalla(false, 1.5f, 3f));    	
+    	ataquesDisponibles.add(() -> new AtaqueRayos(false));
         ataquesDisponibles.add(() -> new AtaqueMitadPantalla(true, 1.5f, 3f));
-        ataquesDisponibles.add(() -> new AtaqueMitadPantalla(false, 1.5f, 3f));
         ataquesDisponibles.add(AtaqueGotas::new);
     }
 

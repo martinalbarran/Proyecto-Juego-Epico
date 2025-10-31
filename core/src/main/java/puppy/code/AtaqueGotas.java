@@ -17,8 +17,6 @@ public class AtaqueGotas implements Ataque {
     private final float cooldown = 3f;
     private boolean enCooldown = false;
     private boolean terminado = false;
-    private Entidad objetivoSeleccionado = null;
-
     public AtaqueGotas() {
         gota = new Texture(Gdx.files.internal("dropBad.png"));
         gotas = new Array<>();
@@ -50,7 +48,7 @@ public class AtaqueGotas implements Ataque {
         
         for (int i = 0; i < gotas.size; i++) {
             Rectangle r = gotas.get(i);
-            r.y -= 200 * delta;
+            r.y -= 400 * delta;
             if (r.y < 0) {
                 gotas.removeIndex(i);
                 i--;
@@ -93,6 +91,5 @@ public class AtaqueGotas implements Ataque {
     @Override
     public void destruir() {
         if (gota != null) gota.dispose();
-        objetivoSeleccionado = null;
     }
 }

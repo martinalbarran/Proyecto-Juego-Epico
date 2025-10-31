@@ -32,10 +32,10 @@ public class GameScreen implements Screen {
 		this.game = game;
         this.batch = game.getBatch();
         this.font = game.getFont();
-        player1Tex = new Texture(Gdx.files.internal("bucket.png"));
-        player2Tex = new Texture(Gdx.files.internal("bucket.png"));
-        player1TexHurt = new Texture(Gdx.files.internal("bucket.png"));
-        player2TexHurt = new Texture(Gdx.files.internal("bucket.png"));
+        player1Tex = new Texture(Gdx.files.internal("jugadorMelee.png"));
+        player2Tex = new Texture(Gdx.files.internal("jugadorRango.png"));
+        player1TexHurt = new Texture(Gdx.files.internal("jugadorMelee.png"));
+        player2TexHurt = new Texture(Gdx.files.internal("jugadorRango.png"));
 		Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
 		
 		jugadorMelee = new JugadorMelee(player1Tex, player1TexHurt,hurtSound, 10, 400, 300, 20, 64, 64);
@@ -63,15 +63,21 @@ public class GameScreen implements Screen {
 	    batch.begin();
 	    jefe.dibujarJefe(batch);
 	    jugadorMelee.dibujar(batch);
+	    
 	    jugadorRango.dibujar(batch);
+	    for (AtaqueRangoJugador disparo : ((JugadorRango) jugadorRango).getDisparos()) {
+	        disparo.dibujar(batch);}
+	    
 	    font.draw(batch, "Vidas Melee: " + jugadorMelee.getVida(), 10, 470);
 	    font.draw(batch, "Vidas Rango: " + jugadorRango.getVida(), 10, 450);
 	    font.draw(batch, "Vida JEFE: " + jefe.getVida(), 10, 430);
 	    batch.end();
-
-
-	    jugadorMelee.actualizar();
+	    
 	    jugadorRango.actualizar();
+	    jugadorRango.ataque();
+	    jugadorRango.chequearAtaque(delta, jefe.getAreaEntidad());
+
+	    jugadorMelee.actualizar();	    
 	    jugadorMelee.ataque();
 	    jugadorMelee.chequearAtaque(delta, jefe.getAreaEntidad());
 	    
@@ -79,6 +85,11 @@ public class GameScreen implements Screen {
 	    jugadores.add(jugadorMelee);
 	    jugadores.add(jugadorRango);
 	    jefe.actualizar(delta, jugadores);
+	    
+	    if (jugadorRango.getAtaqueActual() != null) {
+	        jugadorRango.getAtaqueActual().verificarColision(jefe);
+	        jugadorRango.getAtaqueActual().actualizar(delta, jefe.getAreaEntidad());
+	    }
 
 	    if (jugadorMelee.getAtaqueActual() != null) {
 	        jugadorMelee.getAtaqueActual().verificarColision(jefe);
