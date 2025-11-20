@@ -1,12 +1,20 @@
+ataqueMelee.jpg
+bala.png
 bucket.png
 drop.png
 drop.wav
 dropBad.png
 ecenario.mp3
+escenario.mp3
 gameOver.mp3
+good.mp3
 hurt.ogg
 jefe.png
+jefeHurt.png
+JugadorMelee.png
+jugadorRango.png
 rain.mp3
+rayo.png
 rayo_ataque.png
 rayo_preparacion.png
 With hearths aligned.mp3
