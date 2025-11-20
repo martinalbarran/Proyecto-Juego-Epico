@@ -7,15 +7,18 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class JugadorMelee extends Entidad{
 	
-	   public JugadorMelee(Texture tex, Texture texAlt, Sound ss, int vida, int velocidad, int coordenadasX, int coordenadasY, int ancho, int alto) {
-		   super(tex, texAlt, ss, vida, velocidad, coordenadasX, coordenadasY, ancho, alto);
-	   }
+    public JugadorMelee(Texture tex, Texture texAlt, Sound ss, int vida, int velocidad, int x, int y, int ancho, int alto) {
 
-	   public void ataque() {
-		    if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-		        setAtaqueActual(new AtaqueMeleeJugador(getAreaEntidad())) ;
-		    }
-		}
+    		super(tex, texAlt, ss, vida, velocidad, x, y, ancho, alto);
+			setAtaqueStrategy(new AtaqueMeleeStrategy());
+    	}
+
+    	@Override
+    	public void ataque() {
+        	if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            	super.ataque();
+        	}
+    	}
 	   
 	   public void chequearAtaque(float delta, Rectangle areaJefe) {
 		    if (getAtaqueActual() != null) {

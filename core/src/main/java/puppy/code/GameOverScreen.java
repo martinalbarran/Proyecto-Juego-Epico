@@ -42,10 +42,12 @@ public class GameOverScreen implements Screen {
         batch.end();
 
         if (Gdx.input.isTouched()) {
-            musicaGameOver.stop(); 
-            game.setScreen(new GameScreen(game));
+            musicaGameOver.stop();
+            GameScreen.resetInstance();  
+            game.setScreen(GameScreen.getInstance(game));
             dispose();
         }
+
     }
 
     @Override

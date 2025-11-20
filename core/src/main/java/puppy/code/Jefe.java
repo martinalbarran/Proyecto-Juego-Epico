@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 public class Jefe extends Entidad {
     private List<Supplier<Ataque>> ataquesDisponibles;
     private int indiceAtaqueActual = 0; 
-    private Ataque ataqueActual;
     private Supplier<Ataque> ataquePendienteFactory;
     private Ataque ataquePendienteInstanciaPreview;
     private float tiempoEnfriamiento = 0f;
@@ -44,22 +43,22 @@ public class Jefe extends Entidad {
         if (jugadores == null || jugadores.isEmpty()) return;
 
 
-        if (objetivoSeleccionado == null || (ataqueActual == null && ataquePendienteFactory == null && !enCooldown)) {
+        if (objetivoSeleccionado == null || (getAtaqueActual() == null && ataquePendienteFactory == null && !enCooldown)) {
             int index = MathUtils.random(jugadores.size() - 1);
             objetivoSeleccionado = jugadores.get(index);
         }
 
-        if (ataqueActual != null) {
+        if (getAtaqueActual() != null) {
             moverSegunAtaque(delta, objetivoSeleccionado);
-            ataqueActual.actualizar(delta, getAreaEntidad());
+            getAtaqueActual().actualizar(delta, getAreaEntidad());
 
             for (Entidad jugador : jugadores) {
-                ataqueActual.verificarColision(jugador);
+            	getAtaqueActual().verificarColision(jugador);
             }
 
-            if (ataqueActual.haFinalizado()) {
-                ataqueActual.destruir();
-                ataqueActual = null;
+            if (getAtaqueActual().haFinalizado()) {
+            	getAtaqueActual().destruir();
+                setAtaqueActual(null);
                 enCooldown = true;
                 temporizadorEnfriamiento = tiempoEnfriamiento;
             }
@@ -72,13 +71,13 @@ public class Jefe extends Entidad {
 
             Float objetivoX = ataquePendienteInstanciaPreview.getPosicionObjetivoX(getAreaEntidad(), objetivoSeleccionado);
             if (objetivoX == null) {
-                ataqueActual = ataquePendienteInstanciaPreview;
+                setAtaqueActual(ataquePendienteInstanciaPreview);
                 ataquePendienteFactory = null;
                 ataquePendienteInstanciaPreview = null;
             } else {
                 moverHaciaX(objetivoX, delta);
                 if (Math.abs(getAreaEntidad().x - objetivoX) <= 4f) {
-                    ataqueActual = ataquePendienteInstanciaPreview;
+                	setAtaqueActual(ataquePendienteInstanciaPreview);
                     ataquePendienteFactory = null;
                     ataquePendienteInstanciaPreview = null;
                 }
@@ -92,10 +91,10 @@ public class Jefe extends Entidad {
             return;
         }
         
-        if(ataqueActual != null) {
-	        if (ataqueActual.haFinalizado()) {
-	            ataqueActual.destruir();
-	            ataqueActual = null;
+        if(getAtaqueActual() != null) {
+	        if (getAtaqueActual().haFinalizado()) {
+	        	getAtaqueActual().destruir();
+	            setAtaqueActual(null);
 	            enCooldown = true;
 	            temporizadorEnfriamiento = tiempoEnfriamiento;
 	        }
@@ -123,8 +122,8 @@ public class Jefe extends Entidad {
     }
     
     private void moverSegunAtaque(float delta, Entidad objetivoSeleccionado) {
-        if (ataqueActual == null) return;
-        Float destinoX = ataqueActual.getPosicionObjetivoX(getAreaEntidad(), objetivoSeleccionado);
+        if (getAtaqueActual() == null) return;
+        Float destinoX = getAtaqueActual().getPosicionObjetivoX(getAreaEntidad(), objetivoSeleccionado);
         if (destinoX != null) moverHaciaX(destinoX, delta);
     }
 
@@ -138,13 +137,13 @@ public class Jefe extends Entidad {
     	} else {
     		batch.draw(getTextura(), getAreaEntidad().x, getAreaEntidad().y, getAreaEntidad().width, getAreaEntidad().height);
     	}
-    	if (ataqueActual != null) ataqueActual.dibujar(batch);
+    	if (getAtaqueActual() != null) getAtaqueActual().dibujar(batch);
     }
         
 	  
     public void destruir() {
         getTextura().dispose();
-        if (ataqueActual != null) ataqueActual.destruir();
+        if (getAtaqueActual() != null) getAtaqueActual().destruir();
         if (ataquePendienteInstanciaPreview != null) ataquePendienteInstanciaPreview.destruir();
     }
 

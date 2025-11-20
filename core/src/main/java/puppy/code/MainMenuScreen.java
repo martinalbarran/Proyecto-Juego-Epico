@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MainMenuScreen implements Screen {
-
     final GameLluviaMenu game;
     private SpriteBatch batch;
     private BitmapFont font;
@@ -80,7 +79,7 @@ public class MainMenuScreen implements Screen {
 
         // Detectar click en el botón
         if (Gdx.input.justTouched() && isButtonHovered) {
-            game.setScreen(new GameScreen(game));
+        	game.setScreen(GameScreen.getInstance(game));
             dispose();
         }
     }

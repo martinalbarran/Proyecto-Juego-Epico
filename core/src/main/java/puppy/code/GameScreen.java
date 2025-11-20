@@ -14,6 +14,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen implements Screen {
+
+    private static GameScreen instance;  
 	final GameLluviaMenu game;
     private OrthographicCamera camera;
 	private SpriteBatch batch;	   
@@ -27,15 +29,18 @@ public class GameScreen implements Screen {
 	private Texture player1TexHurt;
 	private Texture player2TexHurt;
 	private Music gameMusic;
-	
-	public GameScreen(final GameLluviaMenu game) {
+
+
+	private GameScreen(final GameLluviaMenu game) {
 		this.game = game;
         this.batch = game.getBatch();
         this.font = game.getFont();
+
         player1Tex = new Texture(Gdx.files.internal("jugadorMelee.png"));
         player2Tex = new Texture(Gdx.files.internal("jugadorRango.png"));
         player1TexHurt = new Texture(Gdx.files.internal("jugadorMelee.png"));
         player2TexHurt = new Texture(Gdx.files.internal("jugadorRango.png"));
+
 		Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
 		
 		jugadorMelee = new JugadorMelee(player1Tex, player1TexHurt,hurtSound, 10, 400, 300, 20, 64, 64);
@@ -46,14 +51,24 @@ public class GameScreen implements Screen {
 	    gameMusic.setVolume(0.3f);
         gameMusic.play();
         gameMusic.setLooping(true);
+
         tarroGlobal = jugadorMelee;
-	      
-	      // camera
+
 	    camera = new OrthographicCamera();
 	    camera.setToOrtho(false, 800, 480);
-	    batch = new SpriteBatch();
 	}
 
+	public static GameScreen getInstance(GameLluviaMenu game) {
+		if (instance == null) {
+			instance = new GameScreen(game);
+		}
+		return instance;
+	}
+	
+	public static void resetInstance() {
+	    instance = null;
+	}
+	
 	@Override
 	public void render(float delta) {
 	    ScreenUtils.clear(0, 0, 0.2f, 1);

@@ -18,6 +18,15 @@ public abstract class Entidad {
 	   private int tiempoHeridoMax = 50;
 	   private int tiempoHerido;
 	   private Ataque ataqueActual;
+	   private AtaqueStrategy ataqueStrategy;
+	   
+	   public AtaqueStrategy getAtaqueStrategy() {
+		    return ataqueStrategy;
+		}
+
+		public void setAtaqueStrategy(AtaqueStrategy ataqueStrategy) {
+		    this.ataqueStrategy = ataqueStrategy;
+		}
 	   
 	   public Entidad(Texture image, Texture imageAlt, Sound ss, int vida, int velocidad, int coordenadasX, int coordenadasY, int ancho, int alto) {
 		   this.textura = image;
@@ -150,8 +159,11 @@ public abstract class Entidad {
 	   return herido;
    }
    
-   public abstract void ataque();
-
+   public void ataque() {
+	    if (ataqueStrategy != null) {
+	        setAtaqueActual(ataqueStrategy.crearAtaque(this));
+	    }
+	}
 
    protected abstract void chequearAtaque(float delta, Rectangle areaEntidad2);
 	   
