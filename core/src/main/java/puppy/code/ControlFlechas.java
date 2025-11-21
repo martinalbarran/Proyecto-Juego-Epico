@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class ControlFlechas implements ControlStrategy {
     @Override
-    public void mover(Jugador j) {
+    public void mover(Jugador j, float delta) {
         Rectangle r = j.getAreaEntidad();
-        float vel = j.getVelocidad() * Gdx.graphics.getDeltaTime();
+        float vel = j.getVelocidad() * delta;
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) r.y += vel;
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) r.y -= vel;

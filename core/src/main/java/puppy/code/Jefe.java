@@ -18,18 +18,24 @@ public class Jefe extends Entidad {
     private boolean enCooldown = false;
     private Entidad objetivoSeleccionado;
     
-    public Jefe() {
+    public Jefe(List<Jugador> jugadores) {
     	super(new Texture(Gdx.files.internal("jefe.png")),new Texture(Gdx.files.internal("jefeHurt.png")),Gdx.audio.newSound(Gdx.files.internal("good.mp3")), 100, 550, 336 , 352, 128, 128);
         ataquesDisponibles = new ArrayList<>();
-        ataque();
+        ataque(jugadores);
     }
 
-    public void ataque() {
+    public void ataque( List<Jugador> jugadores) {
+    	ataquesDisponibles.add(() -> new AtaqueMitadPantalla(false, 1f, 0.5f));  
     	ataquesDisponibles.add(() -> new AtaqueRayos(true)); 
-    	ataquesDisponibles.add(() -> new AtaqueMitadPantalla(false, 1f, 1f));    	
-    	ataquesDisponibles.add(() -> new AtaqueRayos(false));
-        ataquesDisponibles.add(() -> new AtaqueMitadPantalla(true, 1f, 1f));
+        ataquesDisponibles.add(() -> new AtaqueMitadPantalla(true, 1f, 0.5f));
+        ataquesDisponibles.add(() -> new AtaqueEmbestidaDirigida(jugadores.get(1), jugadores));
+        ataquesDisponibles.add(() -> new AtaqueRayos(false));
+        ataquesDisponibles.add(() -> new AtaqueEmbestidaDirigida(jugadores.get(1), jugadores));
+        ataquesDisponibles.add(() -> new AtaqueZonaSegura(1.5f, 1f, jugadores));
         ataquesDisponibles.add(AtaqueGotas::new);
+        ataquesDisponibles.add(() -> new AtaqueZonaSegura(1.5f, 1f, jugadores));
+        ataquesDisponibles.add(AtaqueGotas::new);
+        ataquesDisponibles.add(() -> new AtaqueEmbestidaDirigida(jugadores.get(1), jugadores));
     }
 
     public void registrarAtaque(Supplier<Ataque> nuevoAtaque) {

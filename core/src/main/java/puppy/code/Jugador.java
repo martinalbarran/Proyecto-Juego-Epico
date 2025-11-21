@@ -34,7 +34,7 @@ public class Jugador extends Entidad {
     @Override
     public void mover(float delta) {
         if (controlStrategy != null)
-            controlStrategy.mover(this);
+            controlStrategy.mover(this, delta);
 
         limitarPantalla();
     }
@@ -80,22 +80,4 @@ public class Jugador extends Entidad {
         if (r.y > 350 - r.height) r.y = 350 - r.height;
     }
 
-/*    
-    @Override
-    public void aplicarControl(float delta) {
-        if (controlStrategy != null) controlStrategy.mover(this);
-    }
-
-    public List<Ataque> getAtaquesActivos() {
-        return ataquesActivos;
-    }
-
-    public void setControlStrategy(ControlStrategy control) {
-        this.controlStrategy = control;
-    }
-
-    public void setAtaqueStrategy(AtaqueStrategy ataque) {
-        this.ataqueStrategy = ataque;
-    }
-*/
 }

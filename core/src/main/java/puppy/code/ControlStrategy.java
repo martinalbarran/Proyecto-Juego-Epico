@@ -1,5 +1,5 @@
 package puppy.code;
 
 public interface ControlStrategy {
-    void mover(Jugador jugador);
+    void mover(Jugador jugador, float delta);
 }

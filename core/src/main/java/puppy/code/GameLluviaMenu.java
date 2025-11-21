@@ -31,14 +31,4 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 		public BitmapFont getFont() {
 			return font;
 		}
-/*
-		public int getHigherScore() {
-			return higherScore;
-		}
-
-		public void setHigherScore(int higherScore) {
-			this.higherScore = higherScore;
-		}
-		
-*/
 	}

@@ -18,7 +18,6 @@ public class MainMenuScreen implements Screen {
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
     
-    // Definición del botón
     private Rectangle startButton;
     private boolean isButtonHovered;
 
@@ -43,7 +42,6 @@ public class MainMenuScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);
 
-        // Verificar si el mouse está sobre el botón
         Vector3 mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mousePos);
         isButtonHovered = new Rectangle(startButton.x + 250,startButton.y - 150,startButton.width,startButton.height).contains(mousePos.x, mousePos.y);

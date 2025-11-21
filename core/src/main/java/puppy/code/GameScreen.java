@@ -40,13 +40,13 @@ public class GameScreen implements Screen {
         Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
 
 
-        jugadorMelee = new Jugador(texMelee, texMeleeHurt, hurtSound,10, 200, 2, 50, 64, 64, new ControlWASD(),new AtaqueMeleeStrategy());
-        jugadorRango = new Jugador(texRango, texRangoHurt, hurtSound,10, 200, 70, 50, 64, 64,new ControlFlechas(),new AtaqueRangoStrategy());
+        jugadorMelee = new Jugador(texMelee, texMeleeHurt, hurtSound, 3, 430, 280, 50, 64, 64, new ControlWASD(), new AtaqueMeleeStrategy());
+        jugadorRango = new Jugador(texRango, texRangoHurt, hurtSound, 3, 430, 380, 50, 64, 64, new ControlFlechas(), new AtaqueRangoStrategy());
         jugadores = new ArrayList<>();
         jugadores.add(jugadorMelee);
         jugadores.add(jugadorRango);
         
-        jefe = new Jefe();         
+        jefe = new Jefe(jugadores);         
 
         gameMusic = Gdx.audio.newMusic(Gdx.files.internal("escenario.mp3"));
         gameMusic.setVolume(0.3f);
@@ -92,11 +92,6 @@ public class GameScreen implements Screen {
 	        if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)) {
 	            jugadorRango.ejecutarAtaque();
 	        }
-	        
-	       /*
-	        jugadorMelee.chequearAtaque(delta, jefe.getAreaEntidad());
-	        jugadorRango.chequearAtaque(delta, jefe.getAreaEntidad());
-	        */
 	        
 	        jugadorMelee.verificarColisiones(jefe);
 	        jugadorRango.verificarColisiones(jefe);
