@@ -3,91 +3,113 @@ package puppy.code;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class Jugador {
-	   private Rectangle bucket;
-	   private Texture bucketImage;
-	   private Sound sonidoHerido;
-	   private int vidas = 10;
-	   private int puntos = 0;
-	   private int velx = 400;
-	   private boolean herido = false;
-	   private int tiempoHeridoMax = 50;
-	   private int tiempoHerido;
-	   
-	   
-	   public Jugador() {
-	   }
-	   
-		public int getVidas() {
-			return vidas;
-		}
-	
-		public int getPuntos() {
-			return puntos;
-		}
-		public Rectangle getArea() {
-			return bucket;
-		}
-		public void sumarPuntos(int pp) {
-			puntos+=pp;
-		}
-		
-		public Rectangle getBucket() {
-			return bucket;
-		}
-		
-		public int getVelX() {
-			return velx;
-		}
-		
-		public void setSonidoHerido(Sound ss) {
-			this.sonidoHerido = ss;
-		}
-		
-		public void setBucketImage(Texture tex) {
-			this.bucketImage = tex;
-		}
-		
-	   public void crear() {
-		      bucket = new Rectangle();
-		      bucket.x = 800 / 2 - 64 / 2;
-		      bucket.y = 20;
-		      bucket.width = 64;
-		      bucket.height = 64;
-	   }
-	   public void dañar() {
-		  vidas--;
-		  herido = true;
-		  tiempoHerido=tiempoHeridoMax;
-		  sonidoHerido.play();
-	   }
-	   public void dibujar(SpriteBatch batch) {
-		 if (!herido)  
-		   batch.draw(bucketImage, bucket.x, bucket.y);
-		 else {
-		
-		   batch.draw(bucketImage, bucket.x, bucket.y+ MathUtils.random(-5,5));
-		   tiempoHerido--;
-		   if (tiempoHerido<=0) herido = false;
-		 }
-	   } 
-	   
-	   
-	   public abstract void actualizarMovimiento();
-	    
+public class Jugador extends Entidad {
 
-	public void destruir() {
-		    bucketImage.dispose();
-	   }
-	
-   public boolean estaHerido() {
-	   return herido;
-   }
-   
-   public abstract void ataque();
-	   
+    private ControlStrategy controlStrategy;  
+    private AtaqueStrategy ataqueStrategy;     
+    private List<Ataque> ataquesActivos;       
+
+    public Jugador(Texture tex, Texture texAlt, Sound ss, int vida, int velocidad,int x, int y, int ancho, int alto, ControlStrategy control, AtaqueStrategy ataque) {
+        super(tex, texAlt, ss, vida, velocidad, x, y, ancho, alto);
+
+        this.controlStrategy = control;
+        this.ataqueStrategy = ataque;
+        this.ataquesActivos = new ArrayList<>();
+    }
+
+    @Override
+    public void dibujar(SpriteBatch batch) {
+
+        super.dibujar(batch);
+
+        for (Ataque a : ataquesActivos) {
+            a.dibujar(batch);
+        }
+    }
+    
+    @Override
+    protected void chequearAtaque(float delta, Rectangle areaJefe) {
+        for (int i = 0; i < ataquesActivos.size(); i++) {
+            Ataque a = ataquesActivos.get(i);
+
+            a.actualizar(delta, areaJefe);
+
+            if (a.haFinalizado()) {
+                a.destruir();
+
+                if (a == getAtaqueActual()) {
+                    setAtaqueActual(null);
+                }
+
+                ataquesActivos.remove(i);
+                i--;
+            }
+        }
+    }
+    
+
+    public void actualizar(float delta) {
+
+        if (controlStrategy != null) {
+            controlStrategy.mover(this);
+        }
+
+        limitarPantalla();
+
+        for (int i = 0; i < ataquesActivos.size(); i++) {
+            Ataque a = ataquesActivos.get(i);
+            a.actualizar(delta, null);
+
+            if (a.haFinalizado()) {
+                a.destruir();
+                ataquesActivos.remove(i);
+                i--;
+            }
+        }
+    }
+
+    public void ejecutarAtaque() {
+        if (ataqueStrategy != null) {
+            Ataque nuevo = ataqueStrategy.crearAtaque(this);
+            if (nuevo != null) {
+                ataquesActivos.add(nuevo);
+                setAtaqueActual(nuevo);
+            }
+        }
+    }
+
+    public void verificarColisiones(Entidad jefe) {
+        if (jefe == null) return;
+
+        for (Ataque a : ataquesActivos) {
+            a.verificarColision(jefe);
+        }
+    }
+
+
+    private void limitarPantalla() {
+        Rectangle r = getAreaEntidad();
+
+        if (r.x < 0) r.x = 0;
+        if (r.x > 800 - r.width) r.x = 800 - r.width;
+        if (r.y < 0) r.y = 0;
+        if (r.y > 350 - r.height) r.y = 350 - r.height;
+    }
+
+    public List<Ataque> getAtaquesActivos() {
+        return ataquesActivos;
+    }
+
+    public void setControlStrategy(ControlStrategy control) {
+        this.controlStrategy = control;
+    }
+
+    public void setAtaqueStrategy(AtaqueStrategy ataque) {
+        this.ataqueStrategy = ataque;
+    }
 }

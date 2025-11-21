@@ -20,13 +20,6 @@ public abstract class Entidad {
 	   private Ataque ataqueActual;
 	   private AtaqueStrategy ataqueStrategy;
 	   
-	   public AtaqueStrategy getAtaqueStrategy() {
-		    return ataqueStrategy;
-		}
-
-		public void setAtaqueStrategy(AtaqueStrategy ataqueStrategy) {
-		    this.ataqueStrategy = ataqueStrategy;
-		}
 	   
 	   public Entidad(Texture image, Texture imageAlt, Sound ss, int vida, int velocidad, int coordenadasX, int coordenadasY, int ancho, int alto) {
 		   this.textura = image;
@@ -36,7 +29,14 @@ public abstract class Entidad {
 		   this.velocidad = velocidad;
 		   crearHitbox(coordenadasX, coordenadasY, ancho, alto);
 	   }
+	   
+	   public AtaqueStrategy getAtaqueStrategy() {
+		    return ataqueStrategy;
+		}
 
+		public void setAtaqueStrategy(AtaqueStrategy ataqueStrategy) {
+		    this.ataqueStrategy = ataqueStrategy;
+		}
 	   
 	   public Ataque getAtaqueActual() {
 		    return ataqueActual;

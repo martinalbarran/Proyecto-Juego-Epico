@@ -25,7 +25,7 @@ public class AtaqueRangoJugador implements Ataque {
     public void actualizar(float delta, Rectangle areaEntidad) {
         areaDisparo.y += velocidad * delta;
         
-        if (areaDisparo.y > 450) { // sale de pantalla
+        if (areaDisparo.y > 450) { // por si sale de pantalla
             finalizado = true;
         }
     }
