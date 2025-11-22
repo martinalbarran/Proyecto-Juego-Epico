@@ -19,7 +19,7 @@ public class Jefe extends Entidad {
     private Entidad objetivoSeleccionado;
     
     public Jefe(List<Jugador> jugadores) {
-    	super(new Texture(Gdx.files.internal("jefe.png")),new Texture(Gdx.files.internal("jefeHurt.png")),Gdx.audio.newSound(Gdx.files.internal("good.mp3")), 100, 550, 336 , 352, 128, 128);
+    	super(new Texture(Gdx.files.internal("jefe.png")),new Texture(Gdx.files.internal("jefeHurt.png")),Gdx.audio.newSound(Gdx.files.internal("good.mp3")), 300, 550, 336 , 352, 128, 128);
         ataquesDisponibles = new ArrayList<>();
         ataque(jugadores);
     }
