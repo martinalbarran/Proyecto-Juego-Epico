@@ -1,0 +1,17 @@
+advertencia_circulo.png
+ataqueMelee.jpg
+bala.png
+drop.png
+dropBad.png
+escenario.mp3
+gameOver.mp3
+good.mp3
+hurt.ogg
+jefe.png
+jefeHurt.png
+jugadorMelee.png
+jugadorRango.png
+rayo.png
+rayo_ataque.png
+rayo_preparacion.png
+zona.png
